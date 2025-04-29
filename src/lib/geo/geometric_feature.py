@@ -6,7 +6,7 @@ from typing import Generator, Optional
 from rdflib import URIRef
 from s2geometry import (S2Cell, S2CellId, S2LatLng, S2Loop, S2Point, S2Polygon,
                         S2Polyline, S2RegionCoverer)
-from shapely import (LinearRing, LineString, MultiPolygon, Point, Polygon,
+from shapely import (LinearRing, LineString, MultiLineString, MultiPolygon, Point, Polygon,
                      buffer)
 from shapely.geometry.polygon import signed_area
 
@@ -259,7 +259,7 @@ class GeometricFeature:
 
         elif isinstance(self.geometry, Point):
             s2_point = self.s2_from_coords(self.geometry)
-            cell_id = S2CellId(s2_point).parent()
+            cell_id = S2CellId(s2_point).parent(self.max)
             yield self.iri, KWGOnt.sfWithin, generate_cell_iri(cell_id)
             yield generate_cell_iri(cell_id), KWGOnt.sfContains, self.iri
         else:

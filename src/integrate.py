@@ -9,17 +9,17 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--path",
-        help="Path to the folder with triples being integrated",
+        help="Path to the TSV file with geometries being integrated",
         type=str,
         nargs="?",
-        default="./output",
+        default="./geometries.tsv",
     )
     parser.add_argument(
         "--output_path",
-        help="The path to where the files will be written to. Default is ./output",
+        help="The path to where the output N-triples will be written to. Default is stdout",
         type=Path,
         nargs="?",
-        default="/output/",
+        default="/dev/stdout",
     )
     parser.add_argument(
         "--compressed",
@@ -49,14 +49,6 @@ if __name__ == "__main__":
         nargs="?",
         default=1,
     )
-    parser.add_argument(
-        "--format",
-        help="The format to write the RDF in. Options are xml, n3, turtle, nt, pretty-xml, trix, trig, nquads, "
-        "json-ld, hext",
-        type=str,
-        nargs="?",
-        default="ttl",
-    )
     args = parser.parse_args()
     Integrator(
         args.compressed,
@@ -65,5 +57,4 @@ if __name__ == "__main__":
         args.tolerance,
         args.min_level,
         args.max_level,
-        args.format,
     )
