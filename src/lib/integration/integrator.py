@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import sys
 import csv
 from functools import partial
 from multiprocessing import Pool
@@ -42,6 +43,7 @@ class Integrator:
         :param max_level: The highest s2 level to create triples for
         """
         
+        csv.field_size_limit(sys.maxsize)
         coverer = ConstrainedS2RegionCoverer(min_level, max_level)
         if not compressed:
             if min_level:
