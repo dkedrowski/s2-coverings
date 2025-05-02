@@ -151,9 +151,9 @@ class GeometricFeature:
             S2Point | S2Loop | S2Polyline | S2Polygon: an S2 geometric object
         """
         if isinstance(geometry, tuple):
-            return S2LatLng.FromDegrees(*geometry[::-1]).ToPoint()
+            return S2LatLng.FromDegrees(*geometry[:2][::-1]).ToPoint()
         elif isinstance(geometry, Point):
-            return S2LatLng.FromDegrees(*geometry.coords[0][::-1]).ToPoint()
+            return S2LatLng.FromDegrees(*geometry.coords[0][:2][::-1]).ToPoint()
         elif isinstance(geometry, LinearRing):
             s2_loop = S2Loop()
             s2_loop.Init(list(map(self.s2_from_coords, list(geometry.coords)[:-1])))
