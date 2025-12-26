@@ -36,6 +36,14 @@ class KWGOnt(DefinedNamespace):
     _NS = Namespace(f"{kwg_endpoint}lod/ontology/")
 
 
+class SPATIAL(DefinedNamespace):
+    SPATIAL_ENDPOINT = "http://purl.org/"
+    
+    connectedTo: URIRef
+    
+    _NS = Namespace(f'{SPATIAL_ENDPOINT}spatialai/spatial/spatial-full#')
+
+
 def generate_cell_iri(cell_id: S2CellId) -> URIRef:
     """
     Creates an IRI for an individual cell, with a KnowWhereGraph domain
