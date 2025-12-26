@@ -10,7 +10,7 @@ from shapely import (LinearRing, LineString, MultiLineString, MultiPolygon, Poin
                      buffer)
 from shapely.geometry.polygon import signed_area
 
-from ..rdf.kwg_ont import KWGOnt, generate_cell_iri
+from ..rdf.kwg_ont import KWGOnt, SPATIAL, generate_cell_iri
 from .constrained_s2_region_converer import ConstrainedS2RegionCoverer
 
 
@@ -239,29 +239,40 @@ class GeometricFeature:
         :param coverer: A covering
         :return: A generator of tuples, representing a semantic triple
         """
+      
+        spatial_predicate = SPATIAL.connectedTo
+      
         if isinstance(self.geometry, (Polygon, MultiPolygon)):
             predicate = KWGOnt.sfContains
             inverse = KWGOnt.sfWithin
             for cell_id in self.filling(self.geometry, coverer):
                 yield self.iri, predicate, generate_cell_iri(cell_id)
                 yield generate_cell_iri(cell_id), inverse, self.iri
+                yield self.iri, spatial_predicate, generate_cell_iri(cell_id)
+                yield generate_cell_iri(cell_id), spatial_predicate, self.iri
 
             predicate = KWGOnt.sfOverlaps
             for cell_id in self.yield_overlapping_ids():
                 yield self.iri, predicate, generate_cell_iri(cell_id)
                 yield generate_cell_iri(cell_id), predicate, self.iri
+                yield self.iri, spatial_predicate, generate_cell_iri(cell_id)
+                yield generate_cell_iri(cell_id), spatial_predicate, self.iri
 
         elif isinstance(self.geometry, (LineString, MultiLineString)):
             predicate = KWGOnt.sfCrosses
             for cell_id in self.yield_crossing_ids(self.geometry):
                 yield self.iri, predicate, generate_cell_iri(cell_id)
                 yield generate_cell_iri(cell_id), predicate, self.iri
+                yield self.iri, spatial_predicate, generate_cell_iri(cell_id)
+                yield generate_cell_iri(cell_id), spatial_predicate, self.iri
 
         elif isinstance(self.geometry, Point):
             s2_point = self.s2_from_coords(self.geometry)
             cell_id = S2CellId(s2_point).parent(self.max)
             yield self.iri, KWGOnt.sfWithin, generate_cell_iri(cell_id)
             yield generate_cell_iri(cell_id), KWGOnt.sfContains, self.iri
+            yield self.iri, spatial_predicate, generate_cell_iri(cell_id)
+            yield generate_cell_iri(cell_id), spatial_predicate, self.iri
         else:
             geom_type = self.geometry.geom_type
             msg = f"Geometry of type {geom_type} not supported for s2 relations"
